@@ -21,20 +21,12 @@ const SYSTEM_PROMPT = `당신은 초등학교 3학년 학생들을 위한 수업
 {"questions":[{"type":"R","text":"질문"},{"type":"I","text":"질문"},{"type":"A","text":"질문"},{"type":"S","text":"질문"},{"type":"E","text":"질문"},{"type":"C","text":"질문"}]}`;
 
 async function generateQuestions(lessonContent) {
-  const response = await fetch("https://api.anthropic.com/v1/messages", {
+  const response = await fetch("/api/generate", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      model: "claude-sonnet-4-20250514",
-      max_tokens: 1000,
-      system: SYSTEM_PROMPT,
-      messages: [{ role: "user", content: `수업 내용: ${lessonContent}` }],
-    }),
+    body: JSON.stringify({ lessonContent }),
   });
-  const data = await response.json();
-  const text = data.content.map((i) => i.text || "").join("");
-  const clean = text.replace(/```json|```/g, "").trim();
-  return JSON.parse(clean);
+  return await response.json();
 }
 
 // ── 교사 화면 ──────────────────────────────────────────
